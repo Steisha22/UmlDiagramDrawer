@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.canvas.Canvas?>
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21.0.5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="knure.ua.controller.UseCaseDiagramController">
+   <children>
+      <SplitPane dividerPositions="0.1945488721804511" layoutY="26.0" prefHeight="374.0" prefWidth="640.0">
+         <items>
+            <AnchorPane fx:id="useCaseSideBarMenu" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #e6f7ff;">
+               <children>
+                  <Text layoutX="9.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Actor">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Line endX="35.99998474121094" endY="3.814697265625E-6" layoutX="84.0" layoutY="40.0" startX="-84.80000305175781" stroke="#969696" />
+                  <Text layoutX="9.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use Case">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Line endX="38.99998474121094" layoutX="81.0" layoutY="76.0" startX="-84.80000305175781" stroke="#969696" />
+                  <Group id="actor" fx:id="actor" layoutX="122.0" layoutY="7.0" onDragDetected="#drawNewActor">
+                     <children>
+                        <Circle fill="#3694ec" layoutX="-26.700000762939453" layoutY="2.0" radius="6.0" stroke="BLACK" strokeType="INSIDE" />
+                        <Line endX="-41.75709533691406" endY="-25.94647216796875" layoutX="15.0" layoutY="34.0" startX="-41.75709533691406" startY="-17.0" />
+                        <Line endX="-35.192901611328125" endY="2.600017547607422" layoutX="2.1928863525390625" layoutY="23.399982452392578" startX="-29.099987030029297" startY="-6.892910003662109" />
+                        <Line endX="-21.492935180664062" endY="0.70709228515625" layoutX="2.0" layoutY="25.0" startX="-28.200027465820312" startY="-6.892913818359375" />
+                        <Line endX="-48.70710754394531" endY="-5.29290771484375" layoutX="15.0" layoutY="17.0" startX="-34.59999084472656" startY="-5.29290771484375" />
+                     </children>
+                  </Group>
+                  <Ellipse id="useCase" fill="DODGERBLUE" layoutX="96.0" layoutY="60.0" onDragDetected="#drawNewUseCase" radiusX="20.0" radiusY="10.0" stroke="BLACK" strokeType="INSIDE" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="workArea" minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="512.0" style="-fx-background-color: white;">
+               <children>
+                  <ScrollPane fx:id="scrollPane">
+                     <Canvas fx:id="canvas" height="368.0" width="512.0"/>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+         </items>
+      </SplitPane>
+      <MenuBar prefHeight="24.0" prefWidth="640.0" style="-fx-background-color: #66ccff;">
+         <menus>
+            <Menu mnemonicParsing="false" text="File">
+               <items>
+<!--                  <MenuItem mnemonicParsing="false" text="New" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Open…" />-->
+<!--                  <Menu mnemonicParsing="false" text="Open Recent" />-->
+<!--                  <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Close" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Save" />-->
+                  <MenuItem mnemonicParsing="false" text="Save As…" onAction="#saveCurrentCanvasContents" />
+                  <MenuItem mnemonicParsing="false" text="Revert" />
+<!--                  <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Preferences…" />-->
+<!--                  <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Quit" />-->
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Edit">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Undo"/>
+                  <MenuItem mnemonicParsing="false" text="Redo" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+<!--                  <MenuItem mnemonicParsing="false" text="Cut" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Copy" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Paste" />-->
+                  <MenuItem mnemonicParsing="false" text="Delete" />
+<!--                  <SeparatorMenuItem mnemonicParsing="false" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Select All" />-->
+<!--                  <MenuItem mnemonicParsing="false" text="Unselect All" />-->
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="About UmlDiagramDrawerApp" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>
