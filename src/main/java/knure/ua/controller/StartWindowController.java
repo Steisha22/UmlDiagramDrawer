@@ -74,7 +74,7 @@ public class StartWindowController {
 
 
             // Получаем контроллер нового окна
-            UseCaseDiagramController controller = loader.getController();
+            CommonDiagramController controller = loader.getController();
             ArrayList<DrawableComponent> components = new FileController(null).loadDrawnComponents(diagramStage.getScene().getWindow());
             controller.loadCanvasContents(components);
             diagramStage.show();
