@@ -40,7 +40,7 @@ public abstract class CanvasState {
     }
 
     /**activities to be done before the next state is entered*/
-    public void exitState(){}
+    public void exitState(boolean saveChanges){}
 
     /*listeners for each event to be optionally overridden for each state*/
     public void mousePressedHandler(MouseEvent mouseEvent){}

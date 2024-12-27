@@ -58,4 +58,9 @@ public class UseCase extends BoxComponent {
         gc.setFill(Color.BLACK);
         gc.fillText(title, centerX - (name.getLayoutBounds().getWidth() / 2), getTitleYCoord());
     }
+
+    @Override
+    protected String getPathToDialogFxml() {
+        return "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\useCaseDialog.fxml";
+    }
 }

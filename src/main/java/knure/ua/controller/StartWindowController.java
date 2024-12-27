@@ -1,16 +1,16 @@
 package knure.ua.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import knure.ua.controller.canvasstate.CanvasState;
 import knure.ua.model.components.DrawableComponent;
 
 import java.io.File;
@@ -18,6 +18,10 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class StartWindowController {
+
+    private static final String USE_CASE = "Use Case Diagram";
+    private static final String CLASS_DIAGRAM = "Class Diagram";
+    private static final String STATE_CHART = "State Chart Diagram";
 
     @FXML
     private Button createDiagramButton;
@@ -28,22 +32,22 @@ public class StartWindowController {
     @FXML
     private ComboBox<String> selectorDiagramType;
 
-    // Инициализация ComboBox с типами диаграмм
     @FXML
     public void initialize() {
-        selectorDiagramType.getItems().addAll("Use Case Diagram", "Class Diagram", "State Chart Diagram");
+        selectorDiagramType.getItems().addAll(USE_CASE, CLASS_DIAGRAM, STATE_CHART);
     }
 
     @FXML
     public void getCreateDiagramType(ActionEvent event) {
         String selectedDiagram = selectorDiagramType.getValue();
         if (selectedDiagram != null) {
-            System.out.println("Creating new diagram of type: " + selectedDiagram);
-            if (selectedDiagram.equals("Use Case Diagram")) {
-                openUseCaseDiagramWindow();
+            if (USE_CASE.equals(selectedDiagram)) {
+                loadUseCaseDiagram(true);
+            } else if (CLASS_DIAGRAM.equals(selectedDiagram)) {
+                loadClassDiagram(true);
             }
         } else {
-            System.out.println("No diagram type selected");
+            showErrorAlert("No diagram type selected");
         }
     }
 
@@ -52,28 +56,23 @@ public class StartWindowController {
         String selectedDiagram = selectorDiagramType.getValue();
         if (selectedDiagram != null) {
             if (selectedDiagram.equals("Use Case Diagram")) {
-                loadUseCaseDiagram();
+                loadUseCaseDiagram(false);
             }
         } else {
-            System.out.println("No diagram type selected");
+            showErrorAlert("No diagram type selected");
         }
     }
 
     /**handler for loading a new set of DrawableComponents onto the canvas*/
-    public void loadUseCaseDiagram() {
+    private void loadDiagram(String fxmlPath, String title) {
         try {
-            String fxmlPath = "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\useCaseWindow.fxml";
-
-            // Загружаем FXML
             FXMLLoader loader = new FXMLLoader(new File(fxmlPath).toURI().toURL());
             Pane diagramPane = loader.load();
-            // Создаём новое окно
+
             Stage diagramStage = new Stage();
-            diagramStage.setTitle("Use Case Diagram");
+            diagramStage.setTitle(title);
             diagramStage.setScene(new Scene(diagramPane));
 
-
-            // Получаем контроллер нового окна
             CommonDiagramController controller = loader.getController();
             ArrayList<DrawableComponent> components = new FileController(null).loadDrawnComponents(diagramStage.getScene().getWindow());
             controller.loadCanvasContents(components);
@@ -87,15 +86,13 @@ public class StartWindowController {
         }
     }
 
-    private void openUseCaseDiagramWindow() {
+    private void createNewDiagramWindow(String fxmlPath, String title) {
         try {
-            // Загружаем окно диаграммы
-            URL url = new File("F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\useCaseWindow.fxml").toURI().toURL();
+            URL url = new File(fxmlPath).toURI().toURL();
             Pane diagramPane = FXMLLoader.load(url);
 
-            // Создаем новое окно для диаграммы
             Stage diagramStage = new Stage();
-            diagramStage.setTitle("Use Case Diagram");
+            diagramStage.setTitle(title);
             diagramStage.setScene(new Scene(diagramPane));
 
             diagramStage.show();
@@ -107,6 +104,38 @@ public class StartWindowController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void loadUseCaseDiagram(boolean isNewDiagram) {
+        String fxmlPath = "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\useCaseWindow.fxml";
+
+        if (isNewDiagram) {
+            createNewDiagramWindow(fxmlPath, USE_CASE);
+        } else {
+            loadDiagram(fxmlPath, USE_CASE);
+        }
+    }
+
+    private void loadClassDiagram(boolean isNewDiagram) {
+        String fxmlPath = "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\classDiagramWindow.fxml";
+
+        if (isNewDiagram) {
+            createNewDiagramWindow(fxmlPath, CLASS_DIAGRAM);
+        } else {
+            loadDiagram(fxmlPath, CLASS_DIAGRAM);
+
+        }
+    }
+
+    private void showErrorAlert(String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+
+    @FXML
+    public void quit() {
+        Platform.exit();
     }
 
 }

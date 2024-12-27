@@ -1,18 +1,24 @@
 package knure.ua.model.components.arrows;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import knure.ua.model.components.shapes.BoxComponent;
-import org.javatuples.Pair;
 import knure.ua.model.components.DrawableComponent;
+import knure.ua.model.components.shapes.BoxComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.javatuples.Pair;
+
+import java.io.File;
+import java.net.URL;
+
 @Getter
 @Setter
 public class ResizableLine extends BoxComponent {
@@ -22,17 +28,40 @@ public class ResizableLine extends BoxComponent {
     private Pair<Double, Double> end;
     //defines the relationship that the connection represents
     private ArrowType arrowType;
+    private String role1Text;
+    private String role2Text;
+    private Cardinality multiplicityRole1Text;
+    private Cardinality multiplicityRole2Text;
     //allows the relationship of the connection to be changed in the dialog box
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    private ComboBox<ArrowType> comboBox;
-
+    private ComboBox<ArrowType> arrowTypeComboBox;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private TextField role1Name;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private TextField role2Name;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private ComboBox<Cardinality> multiplicityRole1;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private ComboBox<Cardinality> multiplicityRole2;
     //constant that allows for some wiggle-room in selecting a connection line with the mouse
     private static final double BOUNDARY_LEEWAY = 10;
 
     public ResizableLine() {
         super("" , 0, 0, 0, 0);
         arrowType = ArrowType.None;
-        comboBox = new ComboBox<>();
+        arrowTypeComboBox = new ComboBox<>();
+
+        role1Text = "";
+        role1Name = new TextField("");
+
+        role2Text = "";
+        role2Name = new TextField("");
+
+        multiplicityRole1Text = Cardinality.None;
+        multiplicityRole1 = new ComboBox<>();
+
+        multiplicityRole2Text = Cardinality.None;
+        multiplicityRole2 = new ComboBox<>();
     }
 
     /**
@@ -44,8 +73,21 @@ public class ResizableLine extends BoxComponent {
     public ResizableLine(double startX, double startY){
         super("" , 0, 0, 0, 0);
         this.start = new Pair<>(startX, startY);
+
         arrowType = ArrowType.None;
-        comboBox = new ComboBox<>();
+        arrowTypeComboBox = new ComboBox<>();
+
+        role1Text = "";
+        role1Name = new TextField("");
+
+        role2Text = "";
+        role2Name = new TextField("");
+
+        multiplicityRole1Text = Cardinality.None;
+        multiplicityRole1 = new ComboBox<>();
+
+        multiplicityRole2Text = Cardinality.None;
+        multiplicityRole2 = new ComboBox<>();
     }
 
     /**
@@ -61,8 +103,22 @@ public class ResizableLine extends BoxComponent {
         super("" , 0, 0, 0, 0);
         this.start = new Pair<>(startX, startY);
         this.end = new Pair<>(endX, endY);
+
         this.arrowType = connectionHead;
-        comboBox = new ComboBox<>();
+        arrowTypeComboBox = new ComboBox<>();
+
+        //TODO
+        role1Text = "";
+        role1Name = new TextField("");
+
+        role2Text = "";
+        role2Name = new TextField("");
+
+        multiplicityRole1Text = Cardinality.None;
+        multiplicityRole1 = new ComboBox<>();
+
+        multiplicityRole2Text = Cardinality.None;
+        multiplicityRole2 = new ComboBox<>();
     }
 
     @Override
@@ -83,6 +139,72 @@ public class ResizableLine extends BoxComponent {
         gc.setLineDashes(arrowType.getDashedLineGap());
         gc.strokeLine(start.getValue0(), start.getValue1(), end.getValue0(), end.getValue1());
         arrowType.drawHead(gc, end, start);
+
+        // Угол наклона линии
+        double angle = Math.atan2(end.getValue1() - start.getValue1(), end.getValue0() - start.getValue0());
+
+        // Смещение для текста относительно линии
+        double offset = 10; // Расстояние от линии до текста
+        double edgeOffset = 40; // Отступ от краёв линии (вдоль линии)
+
+        // Координаты для текста ролей
+        double role1X = start.getValue0() - offset * Math.sin(angle) + edgeOffset * Math.cos(angle);
+        double role1Y = start.getValue1() + offset * Math.cos(angle) + edgeOffset * Math.sin(angle);
+
+        double role2X = end.getValue0() - offset * Math.sin(angle) - edgeOffset * Math.cos(angle);
+        double role2Y = end.getValue1() + offset * Math.cos(angle) - edgeOffset * Math.sin(angle);
+
+        // Координаты для текста кардинальности
+        double cardinality1X = start.getValue0() + offset * Math.sin(angle) + edgeOffset * Math.cos(angle);
+        double cardinality1Y = start.getValue1() - offset * Math.cos(angle) + edgeOffset * Math.sin(angle);
+
+        double cardinality2X = end.getValue0() + offset * Math.sin(angle) - edgeOffset * Math.cos(angle);
+        double cardinality2Y = end.getValue1() - offset * Math.cos(angle) - edgeOffset * Math.sin(angle);
+
+        // Рисуем текст ролей
+        gc.setFill(Color.BLACK);
+        gc.fillText(role1Text, role1X, role1Y);
+        gc.fillText(role2Text, role2X, role2Y);
+        gc.fillText(multiplicityRole1Text.getCardinality(), cardinality1X, cardinality1Y);
+        gc.fillText(multiplicityRole2Text.getCardinality(), cardinality2X, cardinality2Y);
+    }
+
+    @Override
+    public TitledPane loadDialog() {
+        try {
+            URL url = new File(getPathToDialogFxml()).toURI().toURL();
+            TitledPane titledPane = FXMLLoader.load(url);
+            AnchorPane contentPane = (AnchorPane) titledPane.getContent();
+
+            for (Node node : contentPane.getChildren()) {
+                if (node instanceof TextField && "role1Name".equals(node.getId())) {
+                    role1Name = (TextField) node;
+                    role1Name.setText(role1Text);
+                } else if (node instanceof TextField && "role2Name".equals(node.getId())) {
+                    role2Name = (TextField) node;
+                    role2Name.setText(role2Text);
+                } else if (node instanceof ComboBox && "multiplicityRole1".equals(node.getId())) {
+                    multiplicityRole1 = (ComboBox<Cardinality>) node;
+                    multiplicityRole1.getItems().setAll(Cardinality.values());
+                    multiplicityRole1.getSelectionModel().select(multiplicityRole1Text);
+                } else if (node instanceof ComboBox && "multiplicityRole2".equals(node.getId())) {
+                    multiplicityRole2 = (ComboBox<Cardinality>) node;
+                    multiplicityRole2.getItems().setAll(Cardinality.values());
+                    multiplicityRole2.getSelectionModel().select(multiplicityRole2Text);
+                } else if (node instanceof ComboBox && "arrowTypeComboBox".equals(node.getId())) {
+                    arrowTypeComboBox = (ComboBox<ArrowType>) node;
+                    arrowTypeComboBox.getItems().setAll(ArrowType.values());
+                    arrowTypeComboBox.getSelectionModel().select(arrowType);
+                } else if (node instanceof Button && "switchDirectionButton".equals(node.getId())) {
+                    Button switchButton = (Button) node;
+                    switchButton.setOnAction((e) -> switchDirection());
+                }
+            }
+            return titledPane;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new TitledPane();
     }
 
     @Override
@@ -97,26 +219,12 @@ public class ResizableLine extends BoxComponent {
     }
 
     @Override
-    public VBox fetchUpdateContentsDialog() {
-        //the layout has two main components: a drop down menu to select the connection type,
-        // and a button to switch the direction of the connection
-        VBox vbox = new VBox();
-        HBox hbox = new HBox();
-        Label titleLabel = new Label("Connection type: ");
-        comboBox.getItems().setAll(ArrowType.values());
-        comboBox.getSelectionModel().select(arrowType);
-        Button switchButton = new Button("Switch Direction");
-        switchButton.setOnAction((e) -> switchDirection());
-        hbox.getChildren().add(titleLabel);
-        hbox.getChildren().add(comboBox);
-        vbox.getChildren().add(hbox);
-        vbox.getChildren().add(switchButton);
-        return vbox;
-    }
-
-    @Override
     public void updateContents() {
-        arrowType = comboBox.getValue();
+        arrowType = arrowTypeComboBox.getValue();
+        role1Text = !role1Name.getText().isBlank() ? role1Name.getText() : "";
+        role2Text = !role2Name.getText().isBlank() ? role2Name.getText() : "";
+        multiplicityRole1Text = multiplicityRole1.getValue() != Cardinality.None ? multiplicityRole1.getValue() : Cardinality.None;
+        multiplicityRole2Text = multiplicityRole2.getValue() != Cardinality.None ? multiplicityRole2.getValue() : Cardinality.None;
     }
 
     @Override
@@ -134,5 +242,10 @@ public class ResizableLine extends BoxComponent {
         Pair<Double, Double> temp = start;
         start = end;
         end = temp;
+    }
+
+    @Override
+    protected String getPathToDialogFxml() {
+        return "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\connectorDialog.fxml";
     }
 }

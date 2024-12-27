@@ -27,7 +27,7 @@ public class ResizeComponentState extends CanvasState {
     }
 
     @Override
-    public void exitState(){
+    public void exitState(boolean saveChanges){
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
     }
 
@@ -90,7 +90,7 @@ public class ResizeComponentState extends CanvasState {
         //draw final resized component
         canvasContentManagementController.getCanvasDrawController().drawFinalComponent(componentToResize);
         canvasContentManagementController.getCanvasDrawController().redrawCanvas();
-        exitState();
+        exitState(true);
     }
 
     /**

@@ -21,7 +21,7 @@ public class MoveComponentState extends CanvasState{
     }
 
     @Override
-    public void exitState(){
+    public void exitState(boolean saveChanges){
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
     }
 
@@ -39,6 +39,6 @@ public class MoveComponentState extends CanvasState{
         componentToDrag.setCenterX(mouseEvent.getX());
         componentToDrag.setCenterY(mouseEvent.getY());
         canvasContentManagementController.getCanvasDrawController().drawFinalComponent(componentToDrag);
-        exitState();
+        exitState(true);
     }
 }

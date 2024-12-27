@@ -1,9 +1,11 @@
 package knure.ua.controller.canvasstate;
 
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import knure.ua.controller.CanvasContentManagementController;
@@ -33,30 +35,35 @@ public class EditComponentContentsState extends CanvasState {
         dialog.initModality(Modality.APPLICATION_MODAL);
 
         //get the dialog box contents
-        VBox vBox = componentToEdit.fetchUpdateContentsDialog();
-        Button doneButton = new Button("Done");
-        doneButton.setId("donebutton");
+        TitledPane titledPane = componentToEdit.loadDialog();
+        AnchorPane contentPane = (AnchorPane) titledPane.getContent();
 
-        //set activities to be performed on completion of the edit
-        doneButton.setOnMouseClicked((e) -> exitState());
-        vBox.setOnKeyPressed((e) -> {
+        for (Node node : contentPane.getChildren()) {
+            if (node instanceof Button && "doneButton".equals(node.getId())) {
+                Button doneButton = (Button) node;
+                doneButton.setOnAction(event -> exitState(true));
+                break;
+            }
+        }
+
+        titledPane.setOnKeyPressed((e) -> {
             if(e.getCode() == KeyCode.ENTER){
-                exitState();
+                exitState(true);
             }
         });
 
         //create and display the dialog box
-        vBox.getChildren().add(doneButton);
-        Scene dialogScene = new Scene(vBox);
-//        dialogScene.getStylesheets().add(String.valueOf(getClass().getResource("/drawablecomponent/drawablecomponent.css")));
+        Scene dialogScene = new Scene(titledPane);
         dialog.setScene(dialogScene);
-        dialog.setOnCloseRequest((e) -> exitState());
+        dialog.setOnCloseRequest((e) -> exitState(false));
         dialog.show();
     }
 
     @Override
-    public void exitState() {
-        componentToEdit.updateContents();
+    public void exitState(boolean saveContent) {
+        if (saveContent) {
+            componentToEdit.updateContents();
+        }
         dialog.close();
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
     }

@@ -23,7 +23,7 @@ public class AddComponentState extends CanvasState {
     }
 
     @Override
-    public void exitState() {
+    public void exitState(boolean saveContent) {
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
     }
 
@@ -37,14 +37,14 @@ public class AddComponentState extends CanvasState {
     public void mousePressedHandler(MouseEvent mouseEvent) {
         if(mouseEvent.getButton() == MouseButton.SECONDARY){
             // a right click indicates cancelling the new component addition
-            exitState();
+            exitState(true);
         } else if(mouseEvent.getButton() == MouseButton.PRIMARY){
             //draw the component on the canvas
             newComponent.setCenterX(mouseEvent.getX());
             newComponent.setCenterY(mouseEvent.getY());
             canvasContentManagementController.getCanvasDrawController().drawFinalComponent(newComponent);
             canvasContentManagementController.addComponent(newComponent);
-            exitState();
+            exitState(true);
         }
     }
 

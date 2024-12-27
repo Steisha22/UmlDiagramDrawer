@@ -1,10 +1,14 @@
 package knure.ua.model.components.shapes;
 
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -13,6 +17,9 @@ import knure.ua.model.components.DrawableComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.File;
+import java.net.URL;
 
 /**Represents DrawableComponents that are box-shaped*/
 @Setter @Getter
@@ -49,16 +56,26 @@ public abstract class BoxComponent extends DrawableComponent {
     }
 
     @Override
-    public VBox fetchUpdateContentsDialog(){
-        VBox vbox = new VBox();
-        HBox hbox = new HBox();
-        Label titleLabel = new Label("Title: ");
-        titleTextField = new TextField(title);
-        hbox.getChildren().add(titleLabel);
-        hbox.getChildren().add(titleTextField);
-        vbox.getChildren().add(hbox);
-        return vbox;
+    public TitledPane loadDialog() {
+        try {
+            URL url = new File(getPathToDialogFxml()).toURI().toURL();
+            TitledPane titledPane = FXMLLoader.load(url);
+            AnchorPane contentPane = (AnchorPane) titledPane.getContent();
+
+            for (Node node : contentPane.getChildren()) {
+                if (node instanceof TextField && "titleTextField".equals(node.getId())) {
+                    titleTextField = (TextField) node;
+                    titleTextField.setText(getTitle());
+                }
+            }
+            return titledPane;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new TitledPane();
     }
+
+    protected abstract String getPathToDialogFxml();
 
     @Override
     public void updateContents() {

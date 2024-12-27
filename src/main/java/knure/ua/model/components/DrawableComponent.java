@@ -2,6 +2,7 @@ package knure.ua.model.components;
 
 import javafx.scene.canvas.GraphicsContext;
 
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -35,7 +36,7 @@ public abstract class DrawableComponent {
      *
      * @return a VBox containing the contents to populate a dialog box with to edit this object's contents
      */
-    public abstract VBox fetchUpdateContentsDialog();
+     public abstract TitledPane loadDialog();
 
     /**Updates the contents of this DrawableComponent after closing the edit dialog*/
     public abstract void updateContents();

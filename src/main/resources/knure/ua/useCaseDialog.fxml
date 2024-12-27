@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<TitledPane alignment="TOP_CENTER" animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="156.0" prefWidth="306.0" style="-fx-background-color: #66ccff;" text="Use Case properties" xmlns="http://javafx.com/javafx/21.0.5" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="126.0" prefWidth="294.0" style="-fx-background-color: #e6f7ff;">
+            <children>
+                <Button id="doneButton" layoutX="104.0" layoutY="85.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="96.0" style="-fx-background-color: #66ccff;" text="Save changes" />
+                <TextField id="titleTextField" layoutX="119.0" layoutY="22.0" prefHeight="30.0" prefWidth="165.0" style="-fx-border-color: #66ccff;" />
+                <Text fill="#006ff7" layoutX="30.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Case title">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+            </children>
+        </AnchorPane>
+    </content>
+</TitledPane>

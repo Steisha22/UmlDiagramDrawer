@@ -24,7 +24,7 @@ public class AddConnectionState extends CanvasState {
     }
 
     @Override
-    public void exitState() {
+    public void exitState(boolean saveContent) {
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
     }
 
@@ -38,13 +38,13 @@ public class AddConnectionState extends CanvasState {
     public void mousePressedHandler(MouseEvent mouseEvent) {
         if(mouseEvent.getButton() == MouseButton.SECONDARY){
             // a right click indicates cancelling the new component addition
-            exitState();
+            exitState(true);
         } else if(mouseEvent.getButton() == MouseButton.PRIMARY){
             //draw the component on the canvas
             resizableLine.setEnd(canvasContentManagementController.findClosestPointOnComponentEdge(mouseEvent.getX(), mouseEvent.getY()));
             canvasContentManagementController.getCanvasDrawController().drawFinalComponent(resizableLine);
             canvasContentManagementController.addComponent(resizableLine);
-            exitState();
+            exitState(true);
         }
     }
 

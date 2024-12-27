@@ -84,4 +84,19 @@ public class CommonDiagramController {
                 canvasContentManagementController.getDrawnComponents(), canvas);
     }
 
+    @FXML
+    public void undo() {
+        canvasContentManagementController.undoLastCanvasChange();
+    }
+
+    @FXML
+    public void delete() {
+        DrawableComponent componentToDelete = canvasContentManagementController.getHighlightedComponent();
+        if(componentToDelete != null){
+            canvasContentManagementController.removeComponent(componentToDelete);
+            canvasContentManagementController.setHighlightedComponent(null);
+            canvasContentManagementController.getCanvasDrawController().redrawCanvas();
+        }
+    }
+
 }

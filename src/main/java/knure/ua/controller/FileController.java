@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import knure.ua.model.components.DrawableComponent;
 import knure.ua.model.components.arrows.ArrowType;
+import knure.ua.model.components.arrows.Cardinality;
 import org.javatuples.Pair;
 import org.reflections.ReflectionUtils;
 import org.w3c.dom.Document;
@@ -226,6 +227,8 @@ public class FileController {
                                     Double.parseDouble(pairAsTextList[1])));
                         } else if (parameterType.equals(ArrowType.class)) {
                             setter.invoke(drawableComponent, ArrowType.valueOf(fieldTagContents));
+                        } else if (parameterType.equals(Cardinality.class)) {
+                            setter.invoke(drawableComponent, Cardinality.valueOf(fieldTagContents));
                         }
                     }
                 }
@@ -281,6 +284,8 @@ public class FileController {
                                 ));
                             } else if (parameterType.equals(ArrowType.class)) {
                                 setter.invoke(drawableComponent, ArrowType.valueOf(fieldNode.asText()));
+                            } else if (parameterType.equals(Cardinality.class)) {
+                                setter.invoke(drawableComponent, Cardinality.valueOf(fieldNode.asText()));
                             }
                         }
                     }

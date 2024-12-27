@@ -68,6 +68,11 @@ public class CanvasContentManagementController {
         canvasDrawController.redrawCanvas();
     }
 
+    public void redoLastCanvasChange(){
+        drawnComponents = drawnComponentStateStack.undoLastCanvasChange(drawnComponents);
+        canvasDrawController.redrawCanvas();
+    }
+
     /**
      * determines what component the passed coordinates belong to and finds a point on the edge of
      * tht component that is closest to the passed coordinates
