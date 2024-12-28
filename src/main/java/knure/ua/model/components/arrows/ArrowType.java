@@ -13,7 +13,9 @@ public enum ArrowType {
     Aggregation(new DiamondHead(Color.WHITE), LineStyle.SOLID_LINE),
     Composition(new DiamondHead(Color.BLACK), LineStyle.SOLID_LINE),
     Inheritance(new ClosedArrow(), LineStyle.SOLID_LINE),
-    Implementation(new ClosedArrow(), LineStyle.DASHED_LINE);
+    Implementation(new ClosedArrow(), LineStyle.DASHED_LINE),
+    Include(new IncludeLine(), LineStyle.DASHED_LINE),
+    Extend(new ExtendLine(), LineStyle.DASHED_LINE);
 
     //the strategy for drawing the arrow head
     private ArrowStart arrowStart;
@@ -47,5 +49,13 @@ public enum ArrowType {
         if(arrowStart != null){
             arrowStart.drawHead(gc, lastPoint, secondLast);
         }
+    }
+
+    public static ArrowType[] getArrowTypes4UseCaseDiagram() {
+        return new ArrowType[] {None, Association, Inheritance, Include, Extend};
+    }
+
+    public static ArrowType[] getArrowTypes4ClassDiagram() {
+        return new ArrowType[] {None, Association, Aggregation, Composition, Dependency, Inheritance, Implementation};
     }
 }

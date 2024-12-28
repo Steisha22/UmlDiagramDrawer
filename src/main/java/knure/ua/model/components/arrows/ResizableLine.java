@@ -9,6 +9,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import knure.ua.controller.StartWindowController;
 import knure.ua.model.components.DrawableComponent;
 import knure.ua.model.components.shapes.BoxComponent;
 import lombok.AccessLevel;
@@ -193,7 +195,7 @@ public class ResizableLine extends BoxComponent {
                     multiplicityRole2.getSelectionModel().select(multiplicityRole2Text);
                 } else if (node instanceof ComboBox && "arrowTypeComboBox".equals(node.getId())) {
                     arrowTypeComboBox = (ComboBox<ArrowType>) node;
-                    arrowTypeComboBox.getItems().setAll(ArrowType.values());
+                    arrowTypeComboBox.getItems().setAll(getArrowTypesByDiagramType());
                     arrowTypeComboBox.getSelectionModel().select(arrowType);
                 } else if (node instanceof Button && "switchDirectionButton".equals(node.getId())) {
                     Button switchButton = (Button) node;
@@ -205,6 +207,21 @@ public class ResizableLine extends BoxComponent {
             e.printStackTrace();
         }
         return new TitledPane();
+    }
+
+    private ArrowType[] getArrowTypesByDiagramType() {
+        String diagramTitle = Stage.getWindows()
+                .stream()
+                .filter(window -> window.isFocused())
+                .filter(window -> window instanceof Stage)
+                .map(window -> ((Stage) window).getTitle())
+                .findFirst().orElse("");
+        if (StartWindowController.USE_CASE.equals(diagramTitle)) {
+            return ArrowType.getArrowTypes4UseCaseDiagram();
+        } else if (StartWindowController.CLASS_DIAGRAM.equals(diagramTitle)) {
+            return ArrowType.getArrowTypes4ClassDiagram();
+        }
+        return ArrowType.values();
     }
 
     @Override

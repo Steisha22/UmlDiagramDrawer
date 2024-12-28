@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 public class StartWindowController {
 
-    private static final String USE_CASE = "Use Case Diagram";
-    private static final String CLASS_DIAGRAM = "Class Diagram";
-    private static final String STATE_CHART = "State Chart Diagram";
+    public static final String USE_CASE = "Use Case Diagram";
+    public static final String CLASS_DIAGRAM = "Class Diagram";
+    public static final String STATE_CHART = "State Chart Diagram";
 
     @FXML
     private Button createDiagramButton;
