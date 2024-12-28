@@ -125,13 +125,32 @@ public class ResizableLine extends BoxComponent {
 
     @Override
     public boolean checkPointInBounds(double x, double y) {
-        double m =  (end.getValue1() - start.getValue1()) / (end.getValue0() - start.getValue0());
-        double b = start.getValue1() - m * start.getValue0();
+        // Координаты начала и конца линии
+        double x1 = start.getValue0();
+        double y1 = start.getValue1();
+        double x2 = end.getValue0();
+        double y2 = end.getValue1();
 
-        //since the lines are so thin, we'll give some wiggle room as defined by the constant
-        return Math.abs(m*x + b - y) <= BOUNDARY_LEEWAY &&
-                ((end.getValue0() <= x && x <= start.getValue0()) ||
-                        (start.getValue0() <= x && x <= end.getValue0()));
+        // Вычисляем расстояние от точки (x, y) до линии
+        double lineLengthSquared = Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2);
+        if (lineLengthSquared == 0) {
+            // Если линия выродилась в точку
+            return Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2)) <= BOUNDARY_LEEWAY;
+        }
+
+        // Проекция точки на линию в виде параметра t
+        double t = ((x - x1) * (x2 - x1) + (y - y1) * (y2 - y1)) / lineLengthSquared;
+        t = Math.max(0, Math.min(1, t)); // Ограничиваем t в пределах [0, 1]
+
+        // Координаты ближайшей точки на линии
+        double closestX = x1 + t * (x2 - x1);
+        double closestY = y1 + t * (y2 - y1);
+
+        // Рассчитываем расстояние от заданной точки до ближайшей точки на линии
+        double distanceSquared = Math.pow(x - closestX, 2) + Math.pow(y - closestY, 2);
+
+        // Сравниваем расстояние с допустимым отклонением
+        return distanceSquared <= Math.pow(BOUNDARY_LEEWAY, 2);
     }
 
     @Override
