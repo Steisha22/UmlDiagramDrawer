@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class PdfReportController {
 	private CanvasContentManagementController canvasContentManagementController;
@@ -109,9 +110,14 @@ public class PdfReportController {
 			}
 
 			// Обработка наследования
-			Actor parentActor = getParentActor(actor, relationships);
+			Actor parentActor = getParentActor(actor, relationships, actors.stream().filter(a -> !a.equals(actor)).collect(Collectors.toList()));
 			if (parentActor != null) {
 				document.add(new Paragraph("Inherited from: " + parentActor.getTitle()));
+				for (UseCase useCase : useCases) {
+					if (isLinked(parentActor, useCase, relationships)) {
+						document.add(new Paragraph(" - " + useCase.getTitle()));
+					}
+				}
 			}
 		}
 
@@ -134,27 +140,6 @@ public class PdfReportController {
 		document.close();
 	}
 
-//	private boolean isLinked(Actor actor, UseCase useCase, List<ResizableLine> relationships) {
-//		for (ResizableLine line : relationships) {
-//			// Сравнение координат актёра и use case
-//			if (line.getStart().equals(new Pair<>(actor.getCenterX(), actor.getCenterY())) &&
-//					line.getEnd().equals(new Pair<>(useCase.getCenterX(), useCase.getCenterY()))) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-//
-//	private Actor getParentActor(Actor actor, List<ResizableLine> relationships) {
-//		for (ResizableLine line : relationships) {
-//			if (line.getArrowType().equals(ArrowType.Inheritance) &&
-//					line.getEnd().equals(new Pair<>(actor.getCenterX(), actor.getCenterY()))) {
-//				return (Actor) findComponentByCoordinates(line.getStart(), relationships);
-//			}
-//		}
-//		return null;
-//	}
-
 	private boolean isLinked(BoxComponent element, UseCase useCase, List<ResizableLine> relationships) {
 		for (ResizableLine line : relationships) {
 			Pair<Double, Double> start = line.getStart();
@@ -175,12 +160,15 @@ public class PdfReportController {
 		// Задаём буфер (погрешность)
 		double buffer = 10.0;
 
+		// Фиксированная высота текста под актёром
+		double textHeight = 20.0;
+
 		// Если элемент - прямоугольник
 		if (element instanceof Actor || element instanceof UseCase) {
 			double left = element.getCenterX() - (element.getWidth() / 2) - buffer;
 			double right = element.getCenterX() + (element.getWidth() / 2) + buffer;
 			double top = element.getCenterY() - (element.getHeight() / 2) - buffer;
-			double bottom = element.getCenterY() + (element.getHeight() / 2) + buffer;
+			double bottom = element.getCenterY() + (element.getHeight() / 2) + buffer + textHeight;
 
 			// Проверка попадания точки в увеличенный прямоугольник
 			return x >= left && x <= right && y >= top && y <= bottom;
@@ -201,15 +189,21 @@ public class PdfReportController {
 		return false;
 	}
 
-	private Actor getParentActor(Actor actor, List<ResizableLine> relationships) {
+	private Actor getParentActor(Actor currentActor, List<ResizableLine> relationships, List<Actor> otherActors) {
 		for (ResizableLine line : relationships) {
-			if (line.getArrowType().equals(ArrowType.Inheritance) &&
-					isPointInsideElement(line.getEnd(), actor)) {
-				return (Actor) findComponentByCoordinates(line.getStart(), relationships);
+			// Проверяем, начинается ли линия внутри текущего актёра и является ли она типа Inheritance
+			if (line.getArrowType().equals(ArrowType.Inheritance) && isPointInsideElement(line.getStart(), currentActor)) {
+				// Проверяем, заканчивается ли линия в пределах другого актёра
+				for (Actor actor : otherActors) {
+					if (isPointInsideElement(line.getEnd(), actor)) {
+						return actor;
+					}
+				}
 			}
 		}
 		return null;
 	}
+
 
 	private String getLinkedTitle(Pair<Double, Double> center, List<? extends BoxComponent> components) {
 		for (BoxComponent component : components) {
@@ -222,7 +216,7 @@ public class PdfReportController {
 
 	private BoxComponent findComponentByCoordinates(Pair<Double, Double> coordinates, List<? extends BoxComponent> components) {
 		for (BoxComponent component : components) {
-			if (new Pair<>(component.getCenterX(), component.getCenterY()).equals(coordinates)) {
+			if (isPointInsideElement(coordinates, component)) {
 				return component;
 			}
 		}
