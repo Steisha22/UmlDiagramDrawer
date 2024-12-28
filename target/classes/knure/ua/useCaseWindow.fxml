@@ -59,6 +59,7 @@
             <Menu mnemonicParsing="false" text="File">
                <items>
                   <MenuItem mnemonicParsing="false" text="Save As…" onAction="#saveCurrentCanvasContents" />
+                  <MenuItem mnemonicParsing="false" text="Create diagram report" onAction="#generateReport" />
                   <MenuItem mnemonicParsing="false" text="Revert" onAction="#undo" />
                </items>
             </Menu>

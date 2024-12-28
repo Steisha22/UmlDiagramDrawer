@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import knure.ua.model.components.DrawableComponent;
+import knure.ua.model.components.arrows.ArrowType;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,7 @@ public class CommonDiagramController {
     protected CanvasContentManagementController canvasContentManagementController;
 
     protected FileController fileController;
+    protected PdfReportController pdfReportController;
 
     //the maximum dimension for the canvas drawing
     protected static final double CANVAS_MAX_SIZE = 4000;
@@ -36,6 +39,7 @@ public class CommonDiagramController {
         //initialize the canvas content management controller
         canvasContentManagementController = new CanvasContentManagementController(canvas);
         fileController = new FileController(canvasContentManagementController);
+        pdfReportController = new PdfReportController(canvasContentManagementController);
 
         //set a listener to redraw the canvas when the window is resized
         ChangeListener<Number> stageSizeListener = (observable, oldValue, newValue) ->
@@ -82,6 +86,21 @@ public class CommonDiagramController {
     public void saveCurrentCanvasContents() {
         fileController.saveDrawnComponents(workArea.getScene().getWindow(),
                 canvasContentManagementController.getDrawnComponents(), canvas);
+    }
+
+    @FXML
+    public void generateReport() {
+        String diagramTitle = Stage.getWindows()
+                .stream()
+                .filter(window -> window.isFocused())
+                .filter(window -> window instanceof Stage)
+                .map(window -> ((Stage) window).getTitle())
+                .findFirst().orElse("");
+        if (StartWindowController.USE_CASE.equals(diagramTitle)) {
+            pdfReportController.generateUseCaseReport();
+        } else if (StartWindowController.CLASS_DIAGRAM.equals(diagramTitle)) {
+            pdfReportController.generateUseCaseReport();
+        }
     }
 
     @FXML
