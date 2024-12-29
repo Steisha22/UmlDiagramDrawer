@@ -46,11 +46,10 @@ public class EditComponentContentsState extends CanvasState {
             } else if (node instanceof Button && "addNewFieldButton".equals(node.getId())) {
                 Button addNewFieldButton = (Button) node;
                 addNewFieldButton.setOnAction((e) -> openAddNewFieldDialog());
+            } else if (node instanceof Button && "addNewMethodButton".equals(node.getId())) {
+                Button addNewMethodButton = (Button) node;
+                addNewMethodButton.setOnAction((e) -> openAddNewMethodDialog());
             }
-//            else if (node instanceof Button && "addNewMethodButton".equals(node.getId())) {
-//                Button addNewMethodButton = (Button) node;
-//                addNewMethodButton.setOnAction((e) -> openAddNewMethodDialog());
-//            }
         }
 
         titledPane.setOnKeyPressed((e) -> {
@@ -79,12 +78,13 @@ public class EditComponentContentsState extends CanvasState {
     private void openAddNewFieldDialog() {
         // Закрываем текущий диалог
         dialog.close();
+        ClassShape classShape = (ClassShape) componentToEdit;
+        classShape.openAddNewFieldOrMethodDialog(canvasContentManagementController, "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\addNewFieldDialog.fxml");
+    }
 
-        // Открываем новый диалог для добавления поля
-        ClassShape classShape = (ClassShape) componentToEdit; // Преобразуем DrawableComponent в ClassShape
-        classShape.openAddNewFieldDialog(dialog);
-
-        // Когда новый диалог закроется, мы откроем исходный диалог снова
-        // (это будет происходить внутри openAddNewFieldDialog метода класса ClassShape)
+    private void openAddNewMethodDialog() {
+        dialog.close();
+        ClassShape classShape = (ClassShape) componentToEdit;
+        classShape.openAddNewFieldOrMethodDialog(canvasContentManagementController, "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\addNewMethodDialog.fxml");
     }
 }

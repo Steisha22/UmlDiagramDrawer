@@ -11,6 +11,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import knure.ua.controller.CanvasContentManagementController;
+import knure.ua.controller.canvasstate.SelectComponentState;
 import knure.ua.model.components.DrawableComponent;
 import lombok.Getter;
 import lombok.Setter;
@@ -91,26 +93,6 @@ public class ClassShape extends BoxComponent {
 		stereotype = new ComboBox<>();
 	}
 
-//	@Override
-//	public void draw(GraphicsContext gc, Color color, int lineWidth) {
-//		// get the top left of the class box to draw
-//		double startX = centerX - (width / 2);
-//		double startY = centerY - (height / 2);
-//
-//		// draw outside box
-//		super.draw(gc, color, lineWidth);
-//
-//		// if stereotype exist, draw it above the class name
-//		if (classStereotype != null && !classStereotype.getStereotype().isEmpty()) {
-//			drawStereotype(gc, startX, startY);  // draw stereotype
-////			startY += 10;  // Сдвигаем Y на высоту стереотипа
-//		}
-//
-//		// draw first divider and field text
-//		double topOfFieldSection = drawDividerAndText(gc, title, fields, startX, startY);
-//		drawDividerAndText(gc, fields, methods, startX, topOfFieldSection);
-//	}
-
 	@Override
 	public void draw(GraphicsContext gc, Color color, int lineWidth) {
 		// Получаем координаты для рисования
@@ -162,7 +144,6 @@ public class ClassShape extends BoxComponent {
 		gc.setFill(Color.BLACK);
 		gc.fillText(classStereotype.getStereotype(),centerX - (stereotypeWidth / 2), getTitleYCoord());
 		return stereotypeHeight;
-//		gc.fillText(classStereotype.getStereotype(), startX + (width / 2) - (stereotypeWidth / 2), startY - stereotypeHeight);
 	}
 
 
@@ -194,27 +175,6 @@ public class ClassShape extends BoxComponent {
 		return topOfThisSection;
 	}
 
-
-//	private void drawStereotype(GraphicsContext gc, double startX, double startY) {
-//		Text stereotypeName = new Text(classStereotype.getStereotype());
-//		new Scene(new Group(stereotypeName)); // Вычисляем размеры текста
-//		double stereotypeWidth = stereotypeName.getLayoutBounds().getWidth();
-//		double stereotypeHeight = stereotypeName.getLayoutBounds().getHeight();
-//
-//		// Стереотип рисуем выше, корректируя Y
-//		gc.setFill(Color.BLACK);
-//		gc.fillText(classStereotype.getStereotype(), startX + (width / 2) - (stereotypeWidth / 2), startY - stereotypeHeight - 5);
-//	}
-//	private void drawStereotype(GraphicsContext gc, double startX, double startY) {
-//		Text stereotypeName = new Text(classStereotype.getStereotype());
-//		new Scene(new Group(stereotypeName)); // Вычисляем размеры текста
-//		double stereotypeWidth = stereotypeName.getLayoutBounds().getWidth();
-//		double stereotypeHeight = stereotypeName.getLayoutBounds().getHeight();
-//
-//		gc.setFill(Color.BLACK);
-//		gc.fillText(classStereotype.getStereotype(), startX + (width / 2) - (stereotypeWidth / 2), startY - stereotypeHeight);
-//	}
-
 	@Override
 	protected double getTitleYCoord(){
 		final Text throwaway = new Text(title);
@@ -236,13 +196,22 @@ public class ClassShape extends BoxComponent {
 	}
 
 	public void addNewField() {
-		fields = fields + "\n" + fieldAccessLevel.getValue().getAccessLevel() + " " + fieldName.getText().trim();
+		String newMethod = fieldAccessLevel.getValue().getAccessLevel() + " " + fieldName.getText().trim();
+		if (fields.isBlank()) {
+			fields += newMethod;
+			return;
+		}
+		fields += "\n" + newMethod;
 	}
 
 	public void addNewMethod() {
-		methods = methods + "\n" + methodAccessLevel.getValue().getAccessLevel() + " " + methodName.getText().trim();
+		String newMethod = methodAccessLevel.getValue().getAccessLevel() + " " + methodName.getText().trim();
+		if (methods.isBlank()) {
+			methods += newMethod;
+			return;
+		}
+		methods += "\n" + newMethod;
 	}
-
 
 	@Override
 	public boolean equals(Object o) {
@@ -276,13 +245,6 @@ public class ClassShape extends BoxComponent {
 					methodsArea = (TextArea) node;
 					methodsArea.setText(methods);
 				}
-//				else if (node instanceof Button && "addNewFieldButton".equals(node.getId())) {
-//					Button addNewFieldButton = (Button) node;
-//					addNewFieldButton.setOnAction((e) -> openAddNewFieldDialog());
-//				} else if (node instanceof Button && "addNewMethodButton".equals(node.getId())) {
-//					Button addNewMethodButton = (Button) node;
-//					addNewMethodButton.setOnAction((e) -> openAddNewMethodDialog());
-//				}
 			}
 			return titledPane;
 		} catch (Exception e) {
@@ -296,47 +258,55 @@ public class ClassShape extends BoxComponent {
 		return "F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\classDialog.fxml";
 	}
 
-	public void openAddNewFieldDialog(Stage parentDialog) {
-		// Создаем новый диалог для добавления поля
+	public void openAddNewFieldOrMethodDialog(CanvasContentManagementController canvasContentManagementController, String dialogTemplatePath) {
 		Stage newFieldDialog = new Stage();
 		newFieldDialog.initModality(Modality.APPLICATION_MODAL);
 
-		// Загрузка FXML для нового диалога
 		try {
-			URL url = new File(getPathToDialogFxml()).toURI().toURL();
+			URL url = new File(dialogTemplatePath).toURI().toURL();
 			TitledPane titledPane = FXMLLoader.load(url);
 			AnchorPane contentPane = (AnchorPane) titledPane.getContent();
 
-			// Извлекаем элементы для работы с полем
-			TextField newFieldName = (TextField) contentPane.lookup("#fieldName");
-			ComboBox<AccessLevel> newFieldAccessLevel = (ComboBox<AccessLevel>) contentPane.lookup("#fieldAccessLevel");
+			for (Node node : contentPane.getChildren()) {
+				if (node instanceof TextField && "fieldName".equals(node.getId())) {
+					fieldName = (TextField) node;
+				} else if (node instanceof TextField && "methodName".equals(node.getId())) {
+					methodName = (TextField) node;
+				} else if (node instanceof Button && "saveNewField".equals(node.getId())) {
+					Button addNewFieldButton = (Button) node;
+					addNewFieldButton.setOnAction(event -> {
+						addNewField();
+						onExit(canvasContentManagementController, newFieldDialog);
+					});
+				} else if (node instanceof Button && "saveNewMethod".equals(node.getId())) {
+					Button addNewMethodButton = (Button) node;
+					addNewMethodButton.setOnAction(event -> {
+						addNewMethod();
+						onExit(canvasContentManagementController, newFieldDialog);
+					});
+				} else if (node instanceof ComboBox && "fieldAccessLevel".equals(node.getId())) {
+					fieldAccessLevel = (ComboBox<AccessLevel>) node;
+					fieldAccessLevel.getItems().setAll(AccessLevel.values());
+					fieldAccessLevel.getSelectionModel().select(AccessLevel.Private);
+				}  else if (node instanceof ComboBox && "methodAccessLevel".equals(node.getId())) {
+					methodAccessLevel = (ComboBox<AccessLevel>) node;
+					methodAccessLevel.getItems().setAll(AccessLevel.values());
+					methodAccessLevel.getSelectionModel().select(AccessLevel.Private);
+				}
+			}
 
-			// Кнопка для добавления нового поля
-			Button addNewFieldButton = (Button) contentPane.lookup("#saveNewField");
-			addNewFieldButton.setOnAction(event -> {
-				// Добавляем новое поле
-				addNewField(newFieldName, newFieldAccessLevel);
-				newFieldDialog.close();
-				// После закрытия нового диалога, возвращаемся к первому диалогу
-				parentDialog.show();
-			});
-
-			// Устанавливаем сцену и показываем новый диалог
 			Scene dialogScene = new Scene(contentPane);
 			newFieldDialog.setScene(dialogScene);
+			newFieldDialog.setOnCloseRequest(event -> onExit(canvasContentManagementController, newFieldDialog));
 			newFieldDialog.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void addNewField(TextField fieldName, ComboBox<AccessLevel> accessLevelComboBox) {
-		// Логика добавления нового поля в класс
-		String field = accessLevelComboBox.getValue().getAccessLevel() + " " + fieldName.getText().trim();
-		fields += "\n" + field;
-		// Обновление содержимого в текстовом поле с полями класса
-		fieldsArea.setText(fields);
+	private void onExit(CanvasContentManagementController canvasContentManagementController, Stage dialog) {
+		canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
+		dialog.close();
 	}
-
 
 }
