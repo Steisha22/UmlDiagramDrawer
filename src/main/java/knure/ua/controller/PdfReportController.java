@@ -287,6 +287,9 @@ public class PdfReportController {
 			addClassSection(document, classShape, classes, relationships);
 		}
 
+		// Добавление секции связей
+		addRelationshipsSection(document, relationships, classes);
+
 		// Закрытие документа
 		document.close();
 	}
@@ -377,5 +380,55 @@ public class PdfReportController {
 
 		return x >= left && x <= right && y >= top && y <= bottom;
 	}
+
+	private void addRelationshipsSection(Document document, List<ResizableLine> relationships, List<ClassShape> classes) {
+		document.add(new Paragraph("\n").setBorderTop(new SolidBorder(new DeviceRgb(200, 200, 200), 1)));
+
+		Paragraph header = new Paragraph("Relationships between Classes")
+				.setFontSize(18)
+				.setBold();
+		document.add(header);
+
+		for (ResizableLine line : relationships) {
+			String description = describeRelationship(line, classes);
+			if (!description.isEmpty()) {
+				document.add(new Paragraph(description).setFontSize(12));
+			}
+		}
+	}
+
+	private String describeRelationship(ResizableLine line, List<ClassShape> classes) {
+		ClassShape startClass = (ClassShape) findComponentByCoordinates(line.getStart(), classes);
+		ClassShape endClass = (ClassShape) findComponentByCoordinates(line.getEnd(), classes);
+
+		if (startClass == null || endClass == null) {
+			return "";
+		}
+
+		StringBuilder description = new StringBuilder();
+
+		description.append("Class ").append(startClass.getTitle()).append(" ");
+		description.append("is ").append(line.getArrowType().toString().toLowerCase()).append(" ");
+		description.append("Class ").append(endClass.getTitle());
+
+		if (line.getMultiplicityRole1Text() != null && !line.getMultiplicityRole1Text().getCardinality().isEmpty()) {
+			description.append(" (")
+					.append("Cardinality: ").append(line.getMultiplicityRole1Text().getCardinality())
+					.append(" -> ").append(line.getMultiplicityRole2Text().getCardinality())
+					.append(")");
+		}
+
+		return description.toString();
+	}
+
+	private BoxComponent findComponentByCoordinates(Pair<Double, Double> coordinates, List<? extends BoxComponent> components) {
+		for (BoxComponent component : components) {
+			if (isPointInsideClassElement(coordinates, component)) {
+				return component;
+			}
+		}
+		return null;
+	}
+
 
 }
