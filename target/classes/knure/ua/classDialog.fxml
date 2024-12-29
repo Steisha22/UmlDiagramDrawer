@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<TitledPane alignment="TOP_CENTER" animated="false" collapsible="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="602.0" prefWidth="335.0" style="-fx-background-color: #66ccff;" text="Class properties" xmlns="http://javafx.com/javafx/21.0.5" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="332.0" prefWidth="360.0" style="-fx-background-color: #e6f7ff;">
+            <children>
+                <Button id="doneButton" layoutX="17.0" layoutY="531.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="298.0" style="-fx-background-color: #66ccff;" text="Save changes">
+                    <font>
+                        <Font size="14.0" />
+                    </font></Button>
+                <Text fill="#006ff7" layoutX="17.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stereotype">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+                <ComboBox id="stereotype" layoutX="150.0" layoutY="61.0" prefHeight="30.0" prefWidth="159.0" style="-fx-background-color: white; -fx-border-color: #66ccff; -fx-border-radius: 5;" />
+                <Text fill="#006ff7" layoutX="30.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+                <Line endX="258.9999694824219" endY="-7.62939453125E-6" layoutX="101.0" layoutY="107.0" opacity="0.48" startX="-100.0" stroke="#a1a1a1" />
+                <Text fill="#006ff7" layoutX="150.0" layoutY="130.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fields">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+                <Line endX="233.20001220703125" layoutX="101.0" layoutY="306.0" opacity="0.48" startX="-100.0" stroke="#a1a1a1" />
+                <Text fill="#006ff7" layoutX="17.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Class name">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+                <TextField id="titleTextField" layoutX="150.0" layoutY="17.0" prefHeight="30.0" prefWidth="159.0" style="-fx-background-color: white; -fx-border-color: #66ccff; -fx-border-radius: 5;" />
+                <TextArea id="fieldsArea" layoutX="15.0" layoutY="143.0" prefHeight="111.0" prefWidth="304.0" style="-fx-background-color: white; -fx-border-color: #66ccff; -fx-border-radius: 5;" />
+                <Button id="addNewFieldButton" layoutX="123.0" layoutY="268.0" mnemonicParsing="false" style="-fx-background-color: #66ccff;" text="Add new field" />
+                <Text fill="#006ff7" layoutX="141.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Methods">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Text>
+                <TextArea id="methodsArea" layoutX="15.0" layoutY="345.0" prefHeight="111.0" prefWidth="304.0" style="-fx-background-color: white; -fx-border-color: #66ccff; -fx-border-radius: 5;" />
+                <Button id="addNewMethodButton" layoutX="114.0" layoutY="472.0" mnemonicParsing="false" style="-fx-background-color: #66ccff;" text="Add new method" />
+                <Line endX="233.20001220703125" layoutX="101.0" layoutY="510.0" opacity="0.48" startX="-100.0" stroke="#a1a1a1" />
+            </children>
+        </AnchorPane>
+    </content>
+</TitledPane>

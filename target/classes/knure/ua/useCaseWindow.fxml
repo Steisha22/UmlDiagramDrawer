@@ -47,7 +47,7 @@
             </AnchorPane>
             <AnchorPane fx:id="workArea" minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="512.0" style="-fx-background-color: white;">
                <children>
-                  <ScrollPane fx:id="scrollPane">
+                  <ScrollPane fx:id="scrollPane" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
                      <Canvas fx:id="canvas" height="368.0" width="512.0"/>
                   </ScrollPane>
                </children>
@@ -66,7 +66,6 @@
             <Menu mnemonicParsing="false" text="Edit">
                <items>
                   <MenuItem mnemonicParsing="false" text="Undo" onAction="#undo"/>
-<!--                  <MenuItem mnemonicParsing="false" text="Redo" />-->
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Delete" onAction="#delete"/>
                </items>

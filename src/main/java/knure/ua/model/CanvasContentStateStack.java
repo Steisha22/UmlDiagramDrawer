@@ -44,14 +44,4 @@ public class CanvasContentStateStack {
         return drawnComponents;
     }
 
-//    public ArrayList<DrawableComponent> redoLastCanvasChange(ArrayList<DrawableComponent> drawnComponents){
-//        if(drawnComponentStateQueue.size() > 0) {
-//            ArrayList<DrawableComponent> newComponentSet;
-//            do {
-//                newComponentSet = new ArrayList<>(drawnComponentStateQueue.pop());
-//            } while(newComponentSet.equals(drawnComponents) && drawnComponentStateQueue.size() > 0);
-//            return new ArrayList<>(newComponentSet);
-//        }
-//        return drawnComponents;
-//    }
 }

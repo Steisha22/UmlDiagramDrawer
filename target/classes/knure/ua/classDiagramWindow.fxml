@@ -1,14 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.Group?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="knure.ua.ClassDiagramWindow"
-            prefHeight="400.0" prefWidth="600.0">
-
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.canvas.Canvas?>
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21.0.5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="knure.ua.controller.ClassDiagramController">
+    <children>
+        <SplitPane dividerPositions="0.1945488721804511" layoutY="26.0" prefHeight="374.0" prefWidth="640.0">
+            <items>
+                <AnchorPane id="classSideBarMenu" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #e6f7ff;">
+                    <children>
+                        <Line endX="40.99998474121094" layoutX="82.0" layoutY="76.0" startX="-84.80000305175781" stroke="#969696" />
+                        <Group id="classBox" layoutX="45.4999885559082" layoutY="17.0" onDragDetected="#drawNewClass">
+                            <children>
+                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="42.0" layoutX="0.5000114440917969" stroke="BLACK" strokeType="INSIDE" width="67.0" />
+                                <Text layoutX="25.500011444091797" layoutY="10.3671875" strokeType="OUTSIDE" strokeWidth="0.0" text="Class">
+                                    <font>
+                                        <Font size="8.0" />
+                                    </font>
+                                </Text>
+                                <Line endX="24.600021362304688" endY="7.62939453125E-6" layoutX="42.0" layoutY="14.500007629394531" startX="-41.0000114440918" startY="7.62939453125E-6" />
+                                <Line endX="24.600021362304688" endY="7.62939453125E-6" layoutX="42.0" layoutY="27.50000762939453" startX="-41.0000114440918" startY="7.62939453125E-6" />
+                            </children>
+                        </Group>
+                        <Text layoutX="8.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Class" />
+                    </children>
+                </AnchorPane>
+                <AnchorPane fx:id="workArea" minHeight="0.0" minWidth="0.0" prefHeight="358.0" prefWidth="512.0" style="-fx-background-color: white;">
+                    <children>
+                        <ScrollPane fx:id="scrollPane" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0">
+                            <Canvas fx:id="canvas" height="368.0" width="512.0"/>
+                        </ScrollPane>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+        <MenuBar prefHeight="24.0" prefWidth="640.0" style="-fx-background-color: #66ccff;">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Save As…" onAction="#saveCurrentCanvasContents" />
+                        <MenuItem mnemonicParsing="false" text="Create diagram report" onAction="#generateReport" />
+                        <MenuItem mnemonicParsing="false" text="Revert" onAction="#undo" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Undo" onAction="#undo"/>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" text="Delete" onAction="#delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About UmlDiagramDrawerApp" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </children>
 </AnchorPane>

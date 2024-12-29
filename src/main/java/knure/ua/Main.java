@@ -9,7 +9,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-//        URL url = new File("F:\\Prodjects\\UmlDiagramDrawer\\src\\main\\resources\\knure\\ua\\controller\\startWindow.fxml").toURI().toURL();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("startWindow.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("UML redactor");

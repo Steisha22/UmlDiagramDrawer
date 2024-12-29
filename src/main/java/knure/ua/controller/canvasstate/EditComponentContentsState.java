@@ -10,6 +10,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import knure.ua.controller.CanvasContentManagementController;
 import knure.ua.model.components.DrawableComponent;
+import knure.ua.model.components.shapes.ClassShape;
 
 /**Handles the editing of a component's contents*/
 public class EditComponentContentsState extends CanvasState {
@@ -42,8 +43,14 @@ public class EditComponentContentsState extends CanvasState {
             if (node instanceof Button && "doneButton".equals(node.getId())) {
                 Button doneButton = (Button) node;
                 doneButton.setOnAction(event -> exitState(true));
-                break;
+            } else if (node instanceof Button && "addNewFieldButton".equals(node.getId())) {
+                Button addNewFieldButton = (Button) node;
+                addNewFieldButton.setOnAction((e) -> openAddNewFieldDialog());
             }
+//            else if (node instanceof Button && "addNewMethodButton".equals(node.getId())) {
+//                Button addNewMethodButton = (Button) node;
+//                addNewMethodButton.setOnAction((e) -> openAddNewMethodDialog());
+//            }
         }
 
         titledPane.setOnKeyPressed((e) -> {
@@ -66,5 +73,18 @@ public class EditComponentContentsState extends CanvasState {
         }
         dialog.close();
         canvasContentManagementController.setCurrentCanvasState(new SelectComponentState(canvasContentManagementController));
+    }
+
+    // Метод для открытия нового диалога для добавления поля
+    private void openAddNewFieldDialog() {
+        // Закрываем текущий диалог
+        dialog.close();
+
+        // Открываем новый диалог для добавления поля
+        ClassShape classShape = (ClassShape) componentToEdit; // Преобразуем DrawableComponent в ClassShape
+        classShape.openAddNewFieldDialog(dialog);
+
+        // Когда новый диалог закроется, мы откроем исходный диалог снова
+        // (это будет происходить внутри openAddNewFieldDialog метода класса ClassShape)
     }
 }

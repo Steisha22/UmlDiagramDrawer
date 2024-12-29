@@ -27,7 +27,6 @@ public class Actor extends BoxComponent {
         return headBottomY + 12 + (throwaway.getLayoutBounds().getHeight() / 2); // 12 - это расстояние от ног до текста
     }
 
-
     @Override
     public DrawableComponent createCopy() {
         return new Actor(this.title, this.centerX, this.centerY, this.height, this.width);

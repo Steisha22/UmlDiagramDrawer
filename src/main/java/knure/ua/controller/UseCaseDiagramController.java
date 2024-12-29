@@ -12,14 +12,14 @@ public class UseCaseDiagramController extends CommonDiagramController {
         super.initialize();
     }
 
-    /**handler for adding a new SingleSectionClassBox to the canvas*/
+    /**handler for adding a new useCase to the canvas*/
     @FXML
     public void drawNewUseCase() {
         canvasContentManagementController.setCurrentCanvasState(
                 new AddComponentState(canvasContentManagementController, new UseCase()));
     }
 
-    /**handler for adding a new TwoSectionClassBox to the canvas*/
+    /**handler for adding a new Actor to the canvas*/
     @FXML
     public void drawNewActor() {
         canvasContentManagementController.setCurrentCanvasState(
