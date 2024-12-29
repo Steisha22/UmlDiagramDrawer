@@ -4,6 +4,7 @@ import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.SolidBorder;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -13,6 +14,7 @@ import knure.ua.model.components.arrows.ArrowType;
 import knure.ua.model.components.arrows.ResizableLine;
 import knure.ua.model.components.shapes.Actor;
 import knure.ua.model.components.shapes.BoxComponent;
+import knure.ua.model.components.shapes.ClassShape;
 import knure.ua.model.components.shapes.UseCase;
 import org.javatuples.Pair;
 
@@ -96,6 +98,8 @@ public class PdfReportController {
 
 		// Информация о каждом актёре
 		for (Actor actor : actors) {
+			// Разделительная линия
+			document.add(new Paragraph("\n").setBorderTop(new SolidBorder(new DeviceRgb(200, 200, 200), 1)));
 			Paragraph actorHeader = new Paragraph("Role: " + actor.getTitle())
 					.setFontSize(18)
 					.setBold();
@@ -112,6 +116,8 @@ public class PdfReportController {
 			addInheritedUseCases(document, actor, relationships, useCases, actors.stream().filter(a -> !a.equals(actor)).collect(Collectors.toList()));
 		}
 
+		// Разделительная линия
+		document.add(new Paragraph("\n").setBorderTop(new SolidBorder(new DeviceRgb(200, 200, 200), 1)));
 		// Информация о зависимостях Use Case
 		Paragraph dependenciesHeader = new Paragraph("Relationships between Use Cases:")
 				.setFontSize(18)
@@ -231,6 +237,145 @@ public class PdfReportController {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
 		alert.setHeaderText(message);
 		alert.showAndWait();
+	}
+
+
+	public void generateClassDiagramReport() {
+		try {
+			String fileName = "Class Diagram Report " + UUID.randomUUID() + ".pdf";
+			File file = new File(fileName);
+
+			List<ClassShape> classes = getClassesFromCanvas();
+			List<ResizableLine> relationships = getRelationshipsFromCanvas();
+
+			generateClassDiagramReport(file, classes, relationships);
+
+			String message = "Report created successfully: " + file.getAbsolutePath();
+			System.out.println(message);
+			showSuccessAlert(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private List<ClassShape> getClassesFromCanvas() {
+		List<ClassShape> classes = new ArrayList<>();
+		for (DrawableComponent component : canvasContentManagementController.getDrawnComponents()) {
+			if (component instanceof ClassShape) {
+				classes.add((ClassShape) component);
+			}
+		}
+		return classes;
+	}
+
+	public void generateClassDiagramReport(File file, List<ClassShape> classes, List<ResizableLine> relationships) throws IOException {
+		// Создание PDF-документа
+		PdfWriter writer = new PdfWriter(file);
+		PdfDocument pdf = new PdfDocument(writer);
+		Document document = new Document(pdf);
+
+		// Добавление заголовка
+		Text titleText = new Text("Class Diagram Report")
+				.setFontSize(24)
+				.setBold()
+				.setFontColor(new DeviceRgb(0, 102, 204));
+		Paragraph title = new Paragraph().add(titleText).setTextAlignment(TextAlignment.CENTER);
+		document.add(title);
+
+		// Информация о каждом классе
+		for (ClassShape classShape : classes) {
+			addClassSection(document, classShape, classes, relationships);
+		}
+
+		// Закрытие документа
+		document.close();
+	}
+
+	private void addClassSection(Document document, ClassShape classShape, List<ClassShape> allClasses, List<ResizableLine> relationships) {
+		// Разделительная линия
+		document.add(new Paragraph("\n").setBorderTop(new SolidBorder(new DeviceRgb(200, 200, 200), 1)));
+
+		// Название секции - имя класса
+		Paragraph classHeader = new Paragraph("Class: " + classShape.getTitle())
+				.setFontSize(18)
+				.setBold();
+		document.add(classHeader);
+
+		// Добавление стереотипа
+		if (classShape.getClassStereotype() != null && !classShape.getClassStereotype().getStereotype().isEmpty()) {
+			document.add(new Paragraph("Stereotype: " + classShape.getClassStereotype().getStereotype())
+					.setFontSize(14));
+		}
+
+		// Поля класса
+		document.add(new Paragraph("Fields:").setFontSize(14).setBold());
+		addFieldsOrMethods(document, classShape.getFields());
+
+		// Методы класса
+		document.add(new Paragraph("Methods:").setFontSize(14).setBold());
+		addFieldsOrMethods(document, classShape.getMethods());
+
+		// Рекурсивное добавление наследованных полей и методов
+		addInheritedFieldsAndMethods(document, classShape, allClasses.stream().filter(c -> !c.equals(classShape)).collect(Collectors.toList()), relationships);
+	}
+
+	private void addFieldsOrMethods(Document document, String content) {
+		if (content == null || content.isBlank()) {
+			document.add(new Paragraph(" • None").setFontSize(12));
+			return;
+		}
+
+		String[] lines = content.split("\n");
+		for (String line : lines) {
+			document.add(new Paragraph(" • " + line).setFontSize(12));
+		}
+	}
+
+	private void addInheritedFieldsAndMethods(Document document, ClassShape currentClass, List<ClassShape> allClasses, List<ResizableLine> relationships) {
+		ClassShape parentClass = getParentClass(currentClass, relationships, allClasses);
+
+		if (parentClass != null) {
+			document.add(new Paragraph("Inherited from: " + parentClass.getTitle()).setFontSize(14).setBold());
+
+			// Добавляем унаследованные поля
+			document.add(new Paragraph("Fields:").setFontSize(14).setBold());
+			addFieldsOrMethods(document, parentClass.getFields());
+
+			// Добавляем унаследованные методы
+			document.add(new Paragraph("Methods:").setFontSize(14).setBold());
+			addFieldsOrMethods(document, parentClass.getMethods());
+
+			// Рекурсивный вызов для следующего уровня
+			addInheritedFieldsAndMethods(document, parentClass, allClasses, relationships);
+		}
+	}
+
+	private ClassShape getParentClass(ClassShape currentClass, List<ResizableLine> relationships, List<ClassShape> allClasses) {
+		for (ResizableLine line : relationships) {
+			if (line.getArrowType().equals(ArrowType.Inheritance) && isPointInsideClassElement(line.getStart(), currentClass)) {
+				for (ClassShape potentialParent : allClasses) {
+					if (isPointInsideClassElement(line.getEnd(), potentialParent)) {
+						return potentialParent;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean isPointInsideClassElement(Pair<Double, Double> point, BoxComponent element) {
+		double x = point.getValue0();
+		double y = point.getValue1();
+
+		// Задаём буфер (погрешность)
+		double buffer = 10.0;
+
+		double left = element.getCenterX() - (element.getWidth() / 2) - buffer;
+		double right = element.getCenterX() + (element.getWidth() / 2) + buffer;
+		double top = element.getCenterY() - (element.getHeight() / 2) - buffer;
+		double bottom = element.getCenterY() + (element.getHeight() / 2) + buffer;
+
+		return x >= left && x <= right && y >= top && y <= bottom;
 	}
 
 }

@@ -99,7 +99,7 @@ public class CommonDiagramController {
         if (StartWindowController.USE_CASE.equals(diagramTitle)) {
             pdfReportController.generateUseCaseReport();
         } else if (StartWindowController.CLASS_DIAGRAM.equals(diagramTitle)) {
-            pdfReportController.generateUseCaseReport();
+            pdfReportController.generateClassDiagramReport();
         }
     }
 

@@ -13,6 +13,7 @@ import javafx.stage.Window;
 import knure.ua.model.components.DrawableComponent;
 import knure.ua.model.components.arrows.ArrowType;
 import knure.ua.model.components.arrows.Cardinality;
+import knure.ua.model.components.shapes.ClassStereotype;
 import org.javatuples.Pair;
 import org.reflections.ReflectionUtils;
 import org.w3c.dom.Document;
@@ -204,10 +205,12 @@ public class FileController {
                 //get all the sub tags for each field
                 NodeList fieldTags = componentTag.getChildNodes();
                 for(Method setter : setters){
+                    String fieldName = setter.getName().substring(3);
+
                     //call each setter to populate DrawableComponent
                     String fieldTagContents = null;
                     for(int j = 0; j < fieldTags.getLength(); j++){
-                        if(setter.getName().contains(fieldTags.item(j).getNodeName())){
+                        if(fieldName.equals(fieldTags.item(j).getNodeName())){
                             fieldTagContents = fieldTags.item(j).getTextContent();
                             break;
                         }
@@ -229,6 +232,8 @@ public class FileController {
                             setter.invoke(drawableComponent, ArrowType.valueOf(fieldTagContents));
                         } else if (parameterType.equals(Cardinality.class)) {
                             setter.invoke(drawableComponent, Cardinality.valueOf(fieldTagContents));
+                        }  else if (parameterType.equals(ClassStereotype.class)) {
+                            setter.invoke(drawableComponent, ClassStereotype.valueOf(fieldTagContents));
                         }
                     }
                 }
@@ -286,6 +291,8 @@ public class FileController {
                                 setter.invoke(drawableComponent, ArrowType.valueOf(fieldNode.asText()));
                             } else if (parameterType.equals(Cardinality.class)) {
                                 setter.invoke(drawableComponent, Cardinality.valueOf(fieldNode.asText()));
+                            }  else if (parameterType.equals(ClassStereotype.class)) {
+                                setter.invoke(drawableComponent, ClassStereotype.valueOf(fieldNode.asText()));
                             }
                         }
                     }

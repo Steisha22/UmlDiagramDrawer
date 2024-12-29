@@ -24,16 +24,16 @@ import java.net.URL;
 @Getter
 @Setter
 public class ClassShape extends BoxComponent {
-	@Getter @Setter
+	@Getter(lombok.AccessLevel.NONE) @Setter(lombok.AccessLevel.NONE)
 	private TextField fieldName;
 
-	@Getter @Setter
+	@Getter(lombok.AccessLevel.NONE) @Setter(lombok.AccessLevel.NONE)
 	private TextField methodName;
 
-	@Getter @Setter
+	@Getter(lombok.AccessLevel.NONE) @Setter(lombok.AccessLevel.NONE)
 	private TextArea fieldsArea;
 
-	@Getter @Setter
+	@Getter(lombok.AccessLevel.NONE) @Setter(lombok.AccessLevel.NONE)
 	private TextArea methodsArea;
 
 	@Getter(lombok.AccessLevel.NONE) @Setter(lombok.AccessLevel.NONE)
@@ -102,9 +102,6 @@ public class ClassShape extends BoxComponent {
 		gc.setStroke(color);
 		gc.setLineWidth(lineWidth);
 		gc.setLineDashes(0);
-		gc.strokeLine(startX, startY, startX, startY + height);
-		gc.strokeLine(startX, startY + height, startX + width, startY + height);
-		gc.strokeLine(startX + width, startY + height, startX + width, startY);
 		gc.strokeLine(startX + width, startY, startX, startY);
 
 		final Text throwaway = new Text(title);
@@ -125,7 +122,15 @@ public class ClassShape extends BoxComponent {
 
 		// draw first divider and field text
 		double topOfFieldSection = drawDividerAndText(gc, heightOfPreviousSection, fields, startX, startY);
-		drawDividerAndText(gc, fields, methods, startX, topOfFieldSection);
+		double topOfMethodSection = drawDividerAndText(gc, fields, methods, startX, topOfFieldSection);
+		double test = drawDividerAndText(gc, methods, "", startX, topOfMethodSection);
+
+
+		Text methodsText = new Text(methods);
+		new Scene(new Group(methodsText));
+		double heightToDraw = test - startY;
+		gc.strokeLine(startX, startY, startX, startY + heightToDraw);  // Left side
+		gc.strokeLine(startX + width, startY + heightToDraw, startX + width, startY);  // Right side
 	}
 
 	/**

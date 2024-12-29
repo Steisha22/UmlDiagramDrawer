@@ -55,8 +55,10 @@ public class StartWindowController {
     public void getOpenDiagramType(ActionEvent event) {
         String selectedDiagram = selectorDiagramType.getValue();
         if (selectedDiagram != null) {
-            if (selectedDiagram.equals("Use Case Diagram")) {
+            if (selectedDiagram.equals(USE_CASE)) {
                 loadUseCaseDiagram(false);
+            } else if (selectedDiagram.equals(CLASS_DIAGRAM)) {
+                loadClassDiagram(false);
             }
         } else {
             showErrorAlert("No diagram type selected");
