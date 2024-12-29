@@ -7,6 +7,7 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.properties.TextAlignment;
+import javafx.scene.control.Alert;
 import knure.ua.model.components.DrawableComponent;
 import knure.ua.model.components.arrows.ArrowType;
 import knure.ua.model.components.arrows.ResizableLine;
@@ -41,7 +42,9 @@ public class PdfReportController {
 
 			generateUseCaseReport(file, actors, useCases, relationships);
 
-			System.out.println("Report created successfully: " + file.getAbsolutePath());
+			String message = "Report created successfully: " + file.getAbsolutePath();
+			System.out.println(message);
+			showSuccessAlert(message);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,22 +106,10 @@ public class PdfReportController {
 			document.add(actorDescription);
 
 			// Перечисление use cases, связанных с актёром
-			for (UseCase useCase : useCases) {
-				if (isLinked(actor, useCase, relationships)) {
-					document.add(new Paragraph(" - " + useCase.getTitle()));
-				}
-			}
+			addUseCases4Actor(document, actor, relationships, useCases);
 
-			// Обработка наследования
-			Actor parentActor = getParentActor(actor, relationships, actors.stream().filter(a -> !a.equals(actor)).collect(Collectors.toList()));
-			if (parentActor != null) {
-				document.add(new Paragraph("Inherited from: " + parentActor.getTitle()));
-				for (UseCase useCase : useCases) {
-					if (isLinked(parentActor, useCase, relationships)) {
-						document.add(new Paragraph(" - " + useCase.getTitle()));
-					}
-				}
-			}
+			// Рекурсивное добавление унаследованных функций
+			addInheritedUseCases(document, actor, relationships, useCases, actors.stream().filter(a -> !a.equals(actor)).collect(Collectors.toList()));
 		}
 
 		// Информация о зависимостях Use Case
@@ -139,6 +130,29 @@ public class PdfReportController {
 		// Закрытие документа
 		document.close();
 	}
+
+	private void addUseCases4Actor(Document document, Actor currentActor, List<ResizableLine> relationships, List<UseCase> useCases) {
+		for (UseCase useCase : useCases) {
+			if (isLinked(currentActor, useCase, relationships)) {
+				document.add(new Paragraph(" - " + useCase.getTitle()));
+			}
+		}
+	}
+
+	private void addInheritedUseCases(Document document, Actor currentActor, List<ResizableLine> relationships, List<UseCase> useCases, List<Actor> otherActors) {
+		Actor parentActor = getParentActor(currentActor, relationships, otherActors);
+
+		if (parentActor != null) {
+			document.add(new Paragraph("Inherited from: " + parentActor.getTitle()));
+
+			// Перечисляем use cases, связанные с родительским актёром
+			addUseCases4Actor(document, parentActor, relationships, useCases);
+
+			// Рекурсивно обрабатываем следующего родителя
+			addInheritedUseCases(document, parentActor, relationships, useCases, otherActors.stream().filter(a -> !a.equals(parentActor)).collect(Collectors.toList()));
+		}
+	}
+
 
 	private boolean isLinked(BoxComponent element, UseCase useCase, List<ResizableLine> relationships) {
 		for (ResizableLine line : relationships) {
@@ -164,7 +178,7 @@ public class PdfReportController {
 		double textHeight = 20.0;
 
 		// Если элемент - прямоугольник
-		if (element instanceof Actor || element instanceof UseCase) {
+		if (element instanceof Actor) {
 			double left = element.getCenterX() - (element.getWidth() / 2) - buffer;
 			double right = element.getCenterX() + (element.getWidth() / 2) + buffer;
 			double top = element.getCenterY() - (element.getHeight() / 2) - buffer;
@@ -204,22 +218,19 @@ public class PdfReportController {
 		return null;
 	}
 
-
 	private String getLinkedTitle(Pair<Double, Double> center, List<? extends BoxComponent> components) {
 		for (BoxComponent component : components) {
-			if (new Pair<>(component.getCenterX(), component.getCenterY()).equals(center)) {
+			if (isPointInsideElement(center, component)) {
 				return component.getTitle();
 			}
 		}
 		return "Unknown";
 	}
 
-	private BoxComponent findComponentByCoordinates(Pair<Double, Double> coordinates, List<? extends BoxComponent> components) {
-		for (BoxComponent component : components) {
-			if (isPointInsideElement(coordinates, component)) {
-				return component;
-			}
-		}
-		return null;
+	private void showSuccessAlert(String message){
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setHeaderText(message);
+		alert.showAndWait();
 	}
+
 }

@@ -34,13 +34,27 @@ public class UseCaseArrow extends OpenArrow {
 		double textX = midX + normalX * textOffset;
 		double textY = midY + normalY * textOffset;
 
+		// Получаем текст надписи
+		String text = arrowType();
+
+		// Вычисляем размер текста
+		javafx.scene.text.Text tempText = new javafx.scene.text.Text(text);
+		tempText.setFont(gc.getFont());
+		double textWidth = tempText.getBoundsInLocal().getWidth();
+		double textHeight = tempText.getBoundsInLocal().getHeight();
+
+		// Корректируем координаты текста для центрирования
+		textX -= textWidth / 2;
+		textY += textHeight / 4; // Поднимаем текст чуть выше центра
+
 		// Рисуем текст
 		gc.setFill(Color.BLACK);
-		gc.fillText(arrowType(), textX, textY);
+		gc.fillText(text, textX, textY);
 
 		// Восстанавливаем исходное состояние GraphicsContext
 		gc.restore();
 	}
+
 
 
 	protected String arrowType() {
