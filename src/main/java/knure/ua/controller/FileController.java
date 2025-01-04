@@ -125,13 +125,13 @@ public class FileController {
                 ObjectNode componentNode = rootNode.addObject();
                 componentNode.put("type", component.getClass().getName());
 
-                // Получить все геттеры и их значения через рефлексию
+                // Get all getters and their values via reflection
                 Set<Method> getters = ReflectionUtils.getAllMethods(component.getClass(),
                         ReflectionUtils.withModifier(Modifier.PUBLIC), ReflectionUtils.withPrefix("get"),
                         ReflectionUtils.withParametersCount(0));
                 for (Method getter : getters) {
                     if (!getter.getName().equals("getClass")) {
-                        String fieldName = getter.getName().substring(3); // Убираем "get"
+                        String fieldName = getter.getName().substring(3); // Remove "get"
                         Object value = getter.invoke(component);
                         if (value != null) {
                             componentNode.put(fieldName, value.toString());
@@ -256,20 +256,20 @@ public class FileController {
                 JsonNode rootNode = objectMapper.readTree(selectedFile);
 
                 for (JsonNode componentNode : rootNode) {
-                    // Получаем имя класса компонента
+                    // Get the name of the component class
                     String className = componentNode.get("type").asText();
                     Class<?> clazz = Class.forName(className);
 
-                    // Создаём новый экземпляр класса
+                    // Create a new instance of the class
                     DrawableComponent drawableComponent = (DrawableComponent) clazz.getConstructor().newInstance();
 
-                    // Проходим по всем методам-сеттерам и вызываем их
+                    // Go through all the setter methods and call them
                     Set<Method> setters = ReflectionUtils.getAllMethods(clazz,
                             ReflectionUtils.withModifier(Modifier.PUBLIC), ReflectionUtils.withPrefix("set"),
                             ReflectionUtils.withParametersCount(1));
 
                     for (Method setter : setters) {
-                        String fieldName = setter.getName().substring(3); // Убираем "set"
+                        String fieldName = setter.getName().substring(3); // Remove "set"
                         JsonNode fieldNode = componentNode.get(fieldName);
 
                         if (fieldNode != null) {
@@ -281,7 +281,7 @@ public class FileController {
                                 setter.invoke(drawableComponent, fieldNode.asText());
                             } else if (parameterType.equals(Pair.class)) {
                                 String[] pairValues = fieldNode.asText()
-                                        .substring(1, fieldNode.asText().length() - 1) // Убираем скобки
+                                        .substring(1, fieldNode.asText().length() - 1) // Remove the brackets
                                         .split(", ");
                                 setter.invoke(drawableComponent, new Pair<>(
                                         Double.parseDouble(pairValues[0]),

@@ -7,7 +7,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import knure.ua.model.components.DrawableComponent;
-import knure.ua.model.components.arrows.ArrowType;
 
 import java.util.ArrayList;
 

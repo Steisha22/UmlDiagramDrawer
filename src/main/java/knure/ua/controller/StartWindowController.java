@@ -21,7 +21,6 @@ public class StartWindowController {
 
     public static final String USE_CASE = "Use Case Diagram";
     public static final String CLASS_DIAGRAM = "Class Diagram";
-    public static final String STATE_CHART = "State Chart Diagram";
 
     @FXML
     private Button createDiagramButton;
@@ -34,7 +33,7 @@ public class StartWindowController {
 
     @FXML
     public void initialize() {
-        selectorDiagramType.getItems().addAll(USE_CASE, CLASS_DIAGRAM, STATE_CHART);
+        selectorDiagramType.getItems().addAll(USE_CASE, CLASS_DIAGRAM);
     }
 
     @FXML

@@ -201,6 +201,9 @@ public class ClassShape extends BoxComponent {
 	}
 
 	public void addNewField() {
+		if (fieldName.getText().trim().isBlank()) {
+			return;
+		}
 		String newMethod = fieldAccessLevel.getValue().getAccessLevel() + " " + fieldName.getText().trim();
 		if (fields.isBlank()) {
 			fields += newMethod;
@@ -210,6 +213,9 @@ public class ClassShape extends BoxComponent {
 	}
 
 	public void addNewMethod() {
+		if (methodName.getText().trim().isBlank()) {
+			return;
+		}
 		String newMethod = methodAccessLevel.getValue().getAccessLevel() + " " + methodName.getText().trim();
 		if (methods.isBlank()) {
 			methods += newMethod;

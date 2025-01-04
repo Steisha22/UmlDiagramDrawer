@@ -7,9 +7,9 @@ import org.javatuples.Pair;
 
 public enum ArrowType {
 
-    None(null, LineStyle.SOLID_LINE),
+    Association(null, LineStyle.SOLID_LINE),
     Dependency(new OpenArrow(), LineStyle.DASHED_LINE),
-    Association(new OpenArrow(), LineStyle.SOLID_LINE),
+    DirectedAssociation(new OpenArrow(), LineStyle.SOLID_LINE),
     Aggregation(new DiamondHead(Color.WHITE), LineStyle.SOLID_LINE),
     Composition(new DiamondHead(Color.BLACK), LineStyle.SOLID_LINE),
     Inheritance(new ClosedArrow(), LineStyle.SOLID_LINE),
@@ -52,10 +52,10 @@ public enum ArrowType {
     }
 
     public static ArrowType[] getArrowTypes4UseCaseDiagram() {
-        return new ArrowType[] {None, Association, Inheritance, Include, Extend};
+        return new ArrowType[] {Association, DirectedAssociation, Inheritance, Include, Extend};
     }
 
     public static ArrowType[] getArrowTypes4ClassDiagram() {
-        return new ArrowType[] {None, Association, Aggregation, Composition, Dependency, Inheritance, Implementation};
+        return new ArrowType[] {Association, DirectedAssociation, Aggregation, Composition, Dependency, Inheritance, Implementation};
     }
 }

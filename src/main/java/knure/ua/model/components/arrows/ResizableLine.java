@@ -50,7 +50,7 @@ public class ResizableLine extends BoxComponent {
 
     public ResizableLine() {
         super("" , 0, 0, 0, 0);
-        arrowType = ArrowType.None;
+        arrowType = ArrowType.Association;
         arrowTypeComboBox = new ComboBox<>();
 
         role1Text = "";
@@ -76,7 +76,7 @@ public class ResizableLine extends BoxComponent {
         super("" , 0, 0, 0, 0);
         this.start = new Pair<>(startX, startY);
 
-        arrowType = ArrowType.None;
+        arrowType = ArrowType.Association;
         arrowTypeComboBox = new ComboBox<>();
 
         role1Text = "";
